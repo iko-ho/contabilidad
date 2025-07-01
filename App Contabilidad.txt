@@ -1,0 +1,74 @@
+﻿¡Perfecto! Muchísimas gracias por estas respuestas tan claras y detalladas. Esto es exactamente lo que necesitaba. Ahora ya no estamos construyendo una "aplicación de contabilidad" genérica, estamos construyendo tu aplicación, a medida para un procurador en España.
+Con esta información, podemos refinar la guía de desarrollo y convertirla en un plan de acción mucho más concreto. Como tu senior, te confirmo que todo lo que pides es totalmente factible y la elección de Django como base es excelente, ya que nos da una estructura robusta y nos facilitará mucho el trabajo, especialmente de cara al futuro.
+Aquí tienes el plan de proyecto actualizado y detallado. Vamos a tratarlo como nuestra hoja de ruta.
+________________
+Plan de Proyecto Detallado: "Gestión Contable para Procurador"
+Fase 0: Cimentación del Proyecto (El "Setup")
+* Objetivo: Preparar el terreno. Un buen comienzo nos ahorrará dolores de cabeza.
+* Acciones:
+   1. Inicializar el proyecto Django: Crearemos la estructura del proyecto y nuestra primera aplicación (por ejemplo, core).
+   2. Configurar el entorno: venv (entorno virtual) para aislar nuestras dependencias, requirements.txt para listarlas y un repositorio Git desde el día uno para controlar las versiones.
+   3. Diseño de la Base de Datos (v1.0): Nos centraremos en el núcleo. Basado en tus respuestas, nuestro diagrama Entidad-Relación inicial incluirá:
+      * User: El modelo de usuario de Django nos sirve. Como solo serás tú, es sencillo, pero ya está listo para crecer.
+      * Client: Tabla para los clientes (NIF, nombre, dirección, etc.). Aunque en el futuro sea una app separada, necesitamos una tabla local para vincular las facturas. La haremos simple pero funcional.
+      * Provider: Ídem para proveedores.
+      * Quote / ProformaInvoice: Para los presupuestos y facturas proforma. Tendrán un estado (pendiente, aceptado, rechazado).
+      * Invoice: La tabla de facturas. Será la más compleja. Campos clave: client (FK a Cliente), fecha_emision, fecha_vencimiento, numero_factura (¡lógica de numeración correlativa!), estado (borrador, emitida, pagada, vencida), base_imponible, total_iva, total_irpf, total.
+      * InvoiceItem: Líneas de la factura (concepto, cantidad, precio unitario).
+      * Expense: Para los gastos. Campos: provider (FK a Proveedor), fecha, concepto, categoria (usaremos una lista de choices o una tabla ExpenseCategory), base_imponible, total_iva, total.
+   4. Configurar el Panel de Administrador de Django: Habilitaremos el admin de Django para poder gestionar estos modelos básicos desde el principio. Es una herramienta de desarrollo potentísima.
+Fase 1: Módulo de Ingresos (El Corazón del Negocio)
+* Objetivo: Poder crear, gestionar y enviar todo el ciclo de ingresos.
+* Acciones:
+   1. CRUD de Clientes: Crear las vistas y plantillas para añadir, ver, editar y eliminar clientes.
+   2. Lógica de Presupuestos y Proformas:
+      * Formularios para crear presupuestos/proformas.
+      * Posibilidad de convertir un presupuesto aceptado en una factura con un solo clic (esto te ahorrará mucho tiempo).
+   3. Lógica de Facturación:
+      * Formulario de creación de facturas. Debe permitir añadir múltiples líneas de concepto.
+      * Cálculos automáticos: Usaremos Decimal para toda la operativa monetaria para evitar problemas de redondeo con los números de coma flotante. El sistema debe calcular los subtotales, IVA (21%) e IRPF (el que aplique, será configurable) en tiempo real.
+      * Generación de PDF: Investigaremos e integraremos una librería como ReportLab o WeasyPrint para generar los PDFs de las facturas con un formato profesional y legalmente válido en España.
+      * Envío por Email: Implementaremos una función que, tras generar el PDF, use el servidor de correo configurado en Django para enviar la factura directamente al cliente con un texto predefinido.
+   4. Panel de Control de Ingresos: Una vista principal donde veas un listado de todas tus facturas, su estado (con colores para identificarlo rápido), y el total facturado.
+Fase 2: Módulo de Gastos
+* Objetivo: Tener un registro claro y categorizado de todos los gastos profesionales.
+* Acciones:
+   1. CRUD de Proveedores: Similar al de clientes.
+   2. Formulario de Registro de Gastos: Un formulario simple para introducir los datos del gasto manualmente.
+   3. Categorización: El campo categoria será un desplegable con opciones que podrás gestionar (Suministros, Alquiler, Cuota Colegio de Procuradores, Software, etc.). Esto es CLAVE para los informes.
+   4. Listado de Gastos: Una vista para ver, filtrar y buscar todos los gastos registrados.
+Fase 3: Módulo de Informes y Fiscalidad
+* Objetivo: Darte la visión financiera que necesitas para tomar decisiones y cumplir con tus obligaciones fiscales sin esfuerzo.
+* Acciones:
+   1. Informe de Resultados (P&G):
+      * Una vista con filtros por periodo (trimestre, año).
+      * Calculará: Total Ingresos (bases imponibles de facturas pagadas) - Total Gastos (bases imponibles) = Beneficio/Pérdida.
+   2. Informe Fiscal (IVA):
+      * Igualmente filtrable por trimestre y año.
+      * Mostrará: Total IVA Repercutido (de facturas emitidas) - Total IVA Soportado (de gastos) = IVA a pagar/devolver.
+   3. Informe de IRPF: Un resumen del IRPF retenido en tus facturas, listo para el modelo 130/111.
+   4. Listado de Facturas Impagadas: Una vista simple que filtre todas las facturas con estado "emitida" o "vencida". Será tu herramienta principal para reclamar pagos.
+Fase 4: Planificación para el Futuro (Dejando las "Puertas Abiertas")
+* Objetivo: Construir la aplicación actual de forma que las futuras ampliaciones sean sencillas de implementar. No lo programaremos ahora, pero lo diseñaremos pensando en ello.
+* Acciones y Consideraciones:
+   1. API para Integraciones: Desde el principio, estructuraremos la lógica de negocio (ej: "crear una factura") en funciones o clases de servicio, separadas de las vistas de Django. De esta forma, en el futuro, crear un endpoint de API con Django Rest Framework que llame a ese mismo servicio será trivial. Esto nos prepara para la "conexión con la app de gestión de despacho".
+   2. Interfaz de Escritorio (PySide): La API que acabamos de mencionar será la forma en que la futura aplicación de escritorio se comunicará con el servidor. La app PySide no accederá directamente a la base de datos, sino que hará peticiones HTTP a nuestra API. Es una arquitectura limpia y desacoplada.
+   3. Gestión de Clientes Externa: El campo client en la tabla Invoice será una clave foránea a nuestra tabla local Client. Si en el futuro creamos una app de gestión de clientes, esta podrá "sincronizar" sus datos con esta tabla local a través de la API. No hay que cambiar nada drástico.
+   4. Registro de Gastos por Foto (OCR): Para el registro de gastos, dejaremos un campo en la tabla Expense llamado attachment_file (o similar) que inicialmente no usaremos. Cuando implementemos la subida de fotos, ya tendremos el sitio en la base de datos. La lógica de OCR (Reconocimiento Óptico de Caracteres) será un servicio aparte que leerá la imagen y rellenará el formulario de gastos, pero la base estará lista.
+Este plan nos da una ruta clara y modular. Empezaremos por la Fase 0 y 1, que constituyen el Mínimo Producto Viable (MVP). Una vez tengas funcionando la creación y gestión de facturas, que es lo que te da de comer, nos moveremos a los gastos y los informes.
+
+
+La respuesta corta es: Sí, por supuesto. La aplicación guardará una copia de cada factura generada para que puedas acceder a ella, descargarla o reenviarla en cualquier momento.
+Ahora, como tu senior, te explico un poco más a fondo cómo lo haremos, para que entiendas la lógica que habrá detrás. Es una decisión de diseño importante.
+No nos limitaremos a generar la factura "al vuelo" cada vez que la pidas. Haremos algo más robusto, que es la práctica recomendada para este tipo de software:
+1. La Fuente de Verdad es la Base de Datos: Todos los datos (cliente, conceptos, importes, impuestos) residen de forma segura en nuestra base de datos. Esto es inamovible.
+2. Generación y Almacenamiento en el Momento Clave: Cuando marques una factura como "Emitida" (o la envíes por primera vez), en ese preciso instante, nuestra aplicación Django hará dos cosas:
+   * Generará el documento PDF con los datos de ese momento.
+   * Guardará ese archivo PDF en el servidor, en una carpeta segura y organizada (por ejemplo, media/facturas/2025/06/factura_2025-001.pdf).
+3. Vinculación con el Registro: Asociaremos ese archivo guardado directamente con el registro de la factura en la base de datos. En nuestro modelo Invoice de Django, tendremos un campo FileField llamado, por ejemplo, archivo_pdf.
+¿Por Qué lo Hacemos Así? (Las Ventajas para el Cliente)
+Esta forma de trabajar te ofrece tres ventajas cruciales:
+* Acceso Instantáneo: Cuando quieras volver a ver una factura de hace seis meses, no tendrás que esperar a que el sistema la regenere. Simplemente harás clic y descargarás el archivo que ya existe. Es mucho más rápido.
+* Registro Histórico (Inmutabilidad): Esta es la ventaja más importante desde un punto de vista legal y contable. El PDF que se guarda es una "foto fija" del momento exacto en que se emitió la factura. Si por alguna razón tuvieras que hacer una corrección posterior (lo cual se haría con una factura rectificativa), el documento original permanece intacto, tal y como lo recibió tu cliente. Esto te da una garantía total y una trazabilidad perfecta.
+* Facilidad para Reenviar: Como el archivo ya existe, la función de "reenviar por email" será muy simple: solo tiene que coger ese archivo y adjuntarlo a un nuevo correo.
+En resumen, puedes estar totalmente tranquilo. Cada factura, presupuesto o proforma que generes tendrá su propio archivo PDF asociado y almacenado, listo para ser consultado cuando lo necesites. La aplicación será tu archivo digital organizado y siempre accesible.
