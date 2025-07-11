@@ -16,6 +16,8 @@ class Invoice(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='invoices')
     client = models.ForeignKey('contact.Client', on_delete=models.PROTECT)
+
+    concept = models.CharField(max_length=255, help_text="Concepto de la factura")
     
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     issue_date = models.DateField(default=date.today, help_text="Fecha de emisión")
@@ -66,6 +68,7 @@ class Invoice(models.Model):
         verbose_name_plural = 'Facturas'
         ordering = ['-issue_date']
 
+
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey('invoices.Invoice', on_delete=models.CASCADE, related_name='items')
 
@@ -113,6 +116,7 @@ class InvoiceItem(models.Model):
         self.line_subtotal = self.quantity * self.unit_price
         self.iva_amount = self.line_subtotal * (self.iva_percent / 100)
         self.irpf_amount = self.line_subtotal * (self.irpf_percent / 100)
-
+        self.line_total = self.line_subtotal + self.iva_amount - self.irpf_amount
+        
         # Guardamos el objeto
         super().save(*args, **kwargs)
