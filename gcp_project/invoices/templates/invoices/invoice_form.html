@@ -1,0 +1,135 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    {% if invoice %}
+        {% if invoice.invoice_type == "RECTIFICATIVE" %}
+            Emitir Factura Rectificativa <span class="text-primary">{{ invoice.rectified_by.invoice_number }}</span>
+        {% else %}
+            Editar Factura <span class="text-primary">{{ invoice.status }}</span>
+        {% endif %}
+    {% else %}
+        Crear Nueva Factura
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">
+        {% if invoice %}
+            {% if invoice.invoice_type == "RECTIFICATIVE" %}
+                Emitir Factura Rectificativa <span class="text-primary">{{ invoice.rectified_by.invoice_number }}</span>
+            {% else %}
+                Editar Factura <span class="text-primary">{{ invoice.status }}</span>
+            {% endif %}
+        {% else %}
+            Crear Nueva Factura
+        {% endif %}
+    </h1>
+
+    <form method="post" action="" class="needs-validation" novalidate>
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ form.errors.as_text }}</strong>
+            </div>
+        {% endif %}
+        {% if formset.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ formset.errors.as_text }}</strong>
+            </div>
+        {% endif %}
+        {% csrf_token %}
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Datos Principales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}<div class="invalid-feedback d-block">{{ form.status.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.client.id_for_label }}" class="form-label">{{ form.client.label }}</label>
+                        {{ form.client }}
+                        {% if form.client.errors %}<div class="invalid-feedback d-block">{{ form.client.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.issue_date.id_for_label }}" class="form-label">{{ form.issue_date.label }}</label>
+                        {{ form.issue_date }}
+                        {% if form.issue_date.errors %}<div class="invalid-feedback d-block">{{ form.issue_date.errors }}</div>{% endif %}
+                    </div>
+                </div>
+                 <div class="mb-3">
+                    <label for="{{ form.concept.id_for_label }}" class="form-label">{{ form.concept.label }}</label>
+                    {{ form.concept }}
+                    {% if form.concept.errors %}<div class="invalid-feedback d-block">{{ form.concept.errors }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Artículos de la Factura</h5>
+            </div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                {% if formset.management_form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ formset.management_form.errors.as_text }}</strong>
+                    </div>
+                {% endif %}
+                <p>{{formset.as_p}}</p>
+                <!-- <<div id="invoice-items-formset">
+                    {% for form_item in formset %}
+                        <div class="row item-form mb-2 align-items-center">
+                            <div class="col-md-5">{{ form_item.description }}</div>
+                            <div class="col-md-2">{{ form_item.quantity }}</div>
+                            <div class="col-md-2">{{ form_item.unit_price|default:0 }}</div>
+                            <div class="col-md-2">Base Imponible: {{ form_item.line_subtotal|default:0 }}</div>
+                            <div class="col-md-2">{{ form_item.iva_tax }}</div>
+                            <div class="col-md-2">IVA: {{ form_item.iva_amount|default:0 }}</div>
+                            <div class="col-md-2">{{ form_item.irpf_tax }}</div>
+                            <div class="col-md-2">IRPF: {{ form_item.irpf_amount|default:0 }}</div>
+                            <div class="col-md-2">Total: {{ form_item.line_total|default:0 }}</div>
+                            <div class="col-md-1">
+                                {% if form_item.instance.pk %}{{ form_item.DELETE }}{% endif %}
+                            </div>
+                            {% if form_item.errors %}
+                                <div class="col-12">
+                                    {% for field, error_list in form_item.errors.items %}
+                                        {% for error in error_list %}
+                                            <div class="alert alert-danger p-1 mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>-->
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end">
+            <a href="{% url 'invoices:invoices' %}" class="btn btn-secondary me-2">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                {% if invoice %}
+                    Actualizar Factura
+                {% else %}
+                    Guardar Factura
+                {% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .item-form:nth-child(odd) {
+        background-color: #f9f9f9;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-radius: 0.25rem;
+    }
+</style>
+{% endblock %}

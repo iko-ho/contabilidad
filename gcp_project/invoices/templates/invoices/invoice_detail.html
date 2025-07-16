@@ -1,0 +1,76 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    Detalle de Factura {{ invoice.invoice_number|default:invoice.status }}
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div id="invoice">
+    <h1>Factura {{ invoice.invoice_number|default:invoice.status }}</h1>
+    <aside>
+        <address id="from">
+            <p>Emisor:</p>
+            <p>{{ invoice.user.first_name }} {{ invoice.user.last_name }}</p>
+            <p>{{ invoice.user.email }}</p>
+            <p>{{ invoice.user.address }}</p>
+        </address>
+        <address id="to">
+            <p>Cliente:</p>
+            <p>{{ invoice.client.razon_social }}</p>
+            <p>{{ invoice.client.id_type }} {{ invoice.client.id_number }}</p>
+            <p>{{ invoice.client.address }}</p>
+        </address>
+    </aside>
+    <table>
+        <tr>
+            <td>Concepto: {{ invoice.concept }}</td>
+            <td>Fecha de emisión: {{ invoice.issue_date }}</td>
+        </tr>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>IRPF</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice_items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price }}</td>
+                    <td>{{ item.line_subtotal }}</td>
+                    <td>{{ item.iva_amount }}</td>
+                    <td>{{ item.irpf_amount }}</td>
+                    <td>{{ item.line_total }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td><strong>TOTAL:</strong></td>
+                <td></td>
+                <td></td>
+                <td><strong>{{ invoice.subtotal }}</strong></td>
+                <td><strong>{{ invoice.total_iva }}</strong></td>
+                <td><strong>{{ invoice.total_irpf }}</strong></td>
+                <td><strong>{{ invoice.total }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    {% if invoice.status != "ISSUED" %}
+        <p><a href="{% url 'invoices:invoice_update' invoice.pk %}" class="btn btn-secondary">Editar Factura</a></p>
+        <p><a href="{% url 'invoices:invoice_delete' invoice.pk %}" class="btn btn-danger">Eliminar Factura</a></p>
+    {% elif invoice.status == "ISSUED" %}
+        <p><a href="{% url 'invoices:invoice_update' invoice.pk %}" class="btn btn-secondary">Emitir Factura Rectificativa</a></p>
+    {% endif %}
+    <p><a href="{% url 'invoices:invoice_pdf' invoice.pk %}" class="btn btn-primary">Descargar PDF</a>
+</div>
+{% endblock %}

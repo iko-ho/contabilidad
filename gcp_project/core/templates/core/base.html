@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ block.title }}Bienvenido a {{ endblock }} - GCP - Gestión Contable Pro</title>
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'invoices/css/invoice.css' %}">
+    <link href="{% static 'invoices/css/invoice.css' %}" media="print" rel="stylesheet">
+    <meta name="description" content="Invoice demo sample">
+</head>
+<body>
+    <nav class="navbar" id="main-navbar">
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="{% url 'invoices:invoices' %}">Facturas</a></li>
+        </ul>
+    </nav>
+    {% block content %}
+    <h1>Bienvenido a GCP - Gestión Contable Pro</h1>
+    <p>Esta es la página principal de la aplicación.</p>
+    {% endblock %}
+</body>
+</html>

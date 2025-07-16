@@ -6,5 +6,5 @@ class InvoicesConfig(AppConfig):
     name = 'invoices'
 
     def ready(self):
-        # Import signals para que se registren
+        # Importa las señales para que se registren
         import invoices.signals

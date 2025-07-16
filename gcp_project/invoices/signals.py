@@ -18,15 +18,16 @@ def update_invoice_totals(sender, instance, **kwargs):
         total_irpf=Sum('irpf_amount')
     )
 
-    invoice.subtotal = totals['line_subtotal'] or 0
-    invoice.total_iva = totals['total_iva'] or 0
-    invoice.total_irpf = totals['total_irpf'] or 0
-    invoice.total = invoice.subtotal + invoice.total_iva - invoice.total_irpf
+    subtotal = totals['line_subtotal'] or 0
+    total_iva = totals['total_iva'] or 0
+    total_irpf = totals['total_irpf'] or 0
+    total = subtotal + total_iva - total_irpf
     
-    # Usamos update en lugar de save para evitar bucles de señales
+    # Usamos update en lugar de save para evitar bucles de señales.
+    # Pasamos los valores calculados directamente al método update.
     Invoice.objects.filter(pk=invoice.pk).update(
-        subtotal=invoice.subtotal,
-        total_iva=invoice.total_iva,
-        total_irpf=invoice.total_irpf,
-        total=invoice.total
+        subtotal=subtotal,
+        total_iva=total_iva,
+        total_irpf=total_irpf,
+        total=total
     )
