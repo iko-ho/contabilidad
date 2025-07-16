@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'core',
     'contact',
     'expenses',
-    'invoices',
+    'invoices.apps.InvoicesConfig',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +144,6 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

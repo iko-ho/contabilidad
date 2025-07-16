@@ -128,36 +128,36 @@ Seguiremos un plan de desarrollo por fases para construir la aplicación de mane
 * **Objetivo:** Poder crear, gestionar y enviar todo el ciclo de ingresos.
 
 * **Sub-fase 1.1: Estructura de Datos (Modelos)**
-    * [ ] **Crear la app `invoices`** y añadirla a `INSTALLED_APPS`.
-    * [ ] **Definir el modelo `Client`** en `invoices/models.py`.
-    * [ ] **Definir el modelo `Invoice`** con su relación a `Client`, los estados (`Status` con `TextChoices`) y los campos monetarios como `DecimalField`.
-    * [ ] **Definir el modelo `InvoiceItem`** con su relación a `Invoice`.
-    * [ ] **Implementar el método `__str__`** en todos los modelos para una mejor representación.
-    * [ ] **Implementar el auto-cálculo del `total_linea`** en el método `save()` del modelo `InvoiceItem`.
+    * [X] **Crear la app `invoices`** y añadirla a `INSTALLED_APPS`.
+    * [X] **Definir el modelo `Client`** en `invoices/models.py`.
+    * [X] **Definir el modelo `Invoice`** con su relación a `Client`, los estados (`Status` con `TextChoices`) y los campos monetarios como `DecimalField`.
+    * [X] **Definir el modelo `InvoiceItem`** con su relación a `Invoice`.
+    * [X] **Implementar el método `__str__`** en todos los modelos para una mejor representación.
+    * [X] **Implementar el auto-cálculo del `total_linea`** en el método `save()` del modelo `InvoiceItem`.
 
 * **Sub-fase 1.2: Integración con el Admin**
-    * [ ] **Registrar el modelo `Client`** en `invoices/admin.py`.
-    * [ ] **Crear una clase `InvoiceItemInline`** (`admin.TabularInline`) para gestionar las líneas desde la factura.
-    * [ ] **Registrar el modelo `Invoice`** con una clase `InvoiceAdmin` que use la `inline` anterior.
-    * [ ] **Mejorar la vista de lista de `InvoiceAdmin`** con `list_display` (`numero_factura`, `cliente`, `fecha_emision`, `total`, `estado`).
+    * [X] **Registrar el modelo `Client`** en `invoices/admin.py`.
+    * [X] **Crear una clase `InvoiceItemInline`** (`admin.TabularInline`) para gestionar las líneas desde la factura.
+    * [X] **Registrar el modelo `Invoice`** con una clase `InvoiceAdmin` que use la `inline` anterior.
+    * [X] **Mejorar la vista de lista de `InvoiceAdmin`** con `list_display` (`numero_factura`, `cliente`, `fecha_emision`, `total`, `estado`).
 
 * **Sub-fase 1.3: Migraciones y Pruebas**
-    * [ ] **Generar el archivo de migración** para la app `invoices` (`makemigrations`).
-    * [ ] **Aplicar la migración a la base de datos** (`migrate`).
-    * [ ] **Probar manualmente en el admin:** Crear Clientes y Facturas con sus líneas.
+    * [X] **Generar el archivo de migración** para la app `invoices` (`makemigrations`).
+    * [X] **Aplicar la migración a la base de datos** (`migrate`).
+    * [X] **Probar manualmente en el admin:** Crear Clientes y Facturas con sus líneas.
 
 * **Sub-fase 1.4: Lógica de Negocio**
-    * [ ] **Numeración automática de facturas:** Implementar la lógica para generar un número correlativo (ej: '2025-001') en el método `save()` de `Invoice` cuando deja de ser borrador.
-    * [ ] **Cálculo automático de totales en la factura:** Usar Señales de Django (`post_save`, `post_delete` en `InvoiceItem`) para llamar a un método en `Invoice` que actualice la base imponible, el IVA y el total de la factura.
+    * [X] **Numeración automática de facturas:** Implementar la lógica para generar un número correlativo (ej: '2025-001') en el método `save()` de `Invoice` cuando deja de ser borrador.
+    * [X] **Cálculo automático de totales en la factura:** Usar Señales de Django (`post_save`, `post_delete` en `InvoiceItem`) para llamar a un método en `Invoice` que actualice la base imponible, el IVA y el total de la factura.
         > **Nota del Senior:** El uso de Señales es la solución ideal y más robusta para mantener los totales de la factura siempre sincronizados sin esfuerzo manual.
 
 * **Sub-fase 1.5: Generación de Documentos**
-    * [ ] **Instalar una librería de generación de PDF** (ej: `weasyprint`).
-    * [ ] **Crear una vista en Django** que reciba el ID de una factura.
-    * [ ] **Crear una plantilla HTML** con la estructura de una factura real.
-    * [ ] **Configurar la vista** para renderizar el HTML y convertirlo a una respuesta HTTP con el PDF.
-    * [ ] **Añadir una URL** que apunte a esta vista (ej: `/invoices/<int:pk>/pdf/`).
-    * [ ] **Implementar el almacenamiento del PDF:** Al emitir la factura, guardar el PDF generado en el servidor y vincularlo a la factura en la BD con un campo `FileField`.
+    * [X] **Instalar una librería de generación de PDF** (ej: `weasyprint`).
+    * [X] **Crear una vista en Django** que reciba el ID de una factura.
+    * [X] **Crear una plantilla HTML** con la estructura de una factura real.
+    * [X] **Configurar la vista** para renderizar el HTML y convertirlo a una respuesta HTTP con el PDF.
+    * [X] **Añadir una URL** que apunte a esta vista (ej: `/invoices/<int:pk>/pdf/`).
+    * [X] **Implementar el almacenamiento del PDF:** Al emitir la factura, guardar el PDF generado en el servidor y vincularlo a la factura en la BD con un campo `FileField`.
 
 </details>
 

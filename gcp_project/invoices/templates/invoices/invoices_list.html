@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    Lista de Facturas
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<h1>Facturas</h1>
+<div class="mb-3">
+    <a href="{% url 'invoices:invoice_create' %}" class="btn btn-primary">Crear Nueva Factura</a>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Número de Factura</th>
+                <th>Fecha de Emisión</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>IRPF</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td><a href="{% url 'invoices:invoice_detail' invoice.id %}">{{ invoice.client }}</a></td>
+                    <td>{{ invoice.invoice_number|default:"[BORRADOR]" }}</td>
+                    <td>{{ invoice.issue_date }}</td>
+                    <td>{{ invoice.subtotal }}</td>
+                    <td>{{ invoice.total_iva|default:0 }}</td>
+                    <td>{{ invoice.total_irpf|default:0 }}</td>
+                    <td>{{ invoice.total }}</td>
+                    <td><a href="{% url 'invoices:invoice_delete' invoice.id %}" class="btn btn-danger">Eliminar</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
